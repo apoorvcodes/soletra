@@ -2,6 +2,7 @@ import { Pagination } from "@discordx/pagination";
 import type { CommandInteraction } from "discord.js";
 import { ApplicationCommandOptionType, EmbedBuilder } from "discord.js";
 import { Discord, Slash, SlashOption } from "discordx";
+import { fetchResponse } from "../utils/fetchTolyGpt.js";
 
 @Discord()
 export class DocsSlash {
@@ -19,6 +20,7 @@ export class DocsSlash {
       })
       msg: string,
     interaction: CommandInteraction): Promise<void> {
+   console.log( await fetchResponse(msg))
     interaction.reply(msg)
   }
 }

@@ -4,6 +4,7 @@ import { Koa } from "@discordx/koa";
 import type { Interaction, Message } from "discord.js";
 import { IntentsBitField } from "discord.js";
 import { Client } from "discordx";
+import { gptrun } from "./utils/langchain.js";
 
 env.config();
 export const bot = new Client({
@@ -45,6 +46,7 @@ bot.once("ready", async () => {
   //  );
 
   console.log("Bot started");
+  gptrun()
 });
 
 bot.on("interactionCreate", (interaction: Interaction) => {

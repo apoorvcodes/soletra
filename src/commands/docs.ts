@@ -3,7 +3,10 @@ import type { CommandInteraction } from "discord.js";
 import { ApplicationCommandOptionType, EmbedBuilder } from "discord.js";
 import { Discord, Slash, SlashOption } from "discordx";
 import { fetchResponse } from "../utils/fetchTolyGpt.js";
-
+import path from "path"
+import { OpenAIEmbeddings } from "langchain/embeddings";
+import { HNSWLib } from "langchain/vectorstores";
+import { makeChain } from "../utils/llm.js";
 @Discord()
 export class DocsSlash {
   // example: pagination for all slash command
@@ -20,7 +23,22 @@ export class DocsSlash {
       })
       msg: string,
     interaction: CommandInteraction): Promise<void> {
-   console.log( await fetchResponse(msg))
+      const dir = path.resolve(process.cwd(), "data");
+
+      const vectorstore = await HNSWLib.load(dir, new OpenAIEmbeddings());
+      const chain = makeChain(vectorstore);
+
+      try {
+      const res =   await chain.call({
+          question: msg,
+          chat_history: [],
+        });
+        console.log(res.text)
+        interaction.reply(res.text)
+      } catch (err) {
+        console.error(err);
+      }
+
     interaction.reply(msg)
   }
 }
